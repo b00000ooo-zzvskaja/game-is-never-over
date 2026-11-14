@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Game is never over</title>
+<link rel="stylesheet" href="style.css?v=pet-contact-and-seam">
+<body>
+<main>
+  <div class="scene" aria-busy="true">
+  <img class="artwork" src="previews/head-seedance-first-frame.png" width="1920" height="1080" alt="Героиня сидит на кровати в комнате за стеклом во лбу. Рядом два чёрных демона." fetchpriority="high" draggable="false">
+    <video class="reaction" id="cry" src="previews/head-cry-seedance.mp4" preload="auto" muted playsinline aria-hidden="true" hidden></video>
+    <video class="reaction" id="face" src="previews/head-squint-seedance.mp4" preload="auto" muted playsinline aria-hidden="true" hidden></video>
+    <div class="room-window room-window-full">
+      <video class="room" id="room" data-prealigned="true" src="previews/pet-cycle-matched.mp4" preload="auto" muted playsinline aria-hidden="true"></video>
+      <img class="room-static" src="previews/pet-room-anchor.png" alt="" aria-hidden="true">
+      <video class="room right-preview" id="room-right" src="previews/right-pet-preview.mp4" preload="auto" muted playsinline aria-hidden="true" hidden></video>
+      <video class="room right-preview" id="room-right-destroy" src="previews/right-destroy-preview.mp4" preload="auto" muted playsinline aria-hidden="true" hidden></video>
+      <video class="room" id="room-destroy" src="previews/left-destroy-v2.mp4" preload="auto" muted playsinline aria-hidden="true" hidden></video>
+      <img class="right-pet-bottom" src="previews/pet-room-anchor.png" alt="" aria-hidden="true">
+    </div>
+    <img class="glass-overlay" src="previews/glass-outer-seam.png" alt="" aria-hidden="true">
+    <div class="left-demon-actions" role="group" aria-label="Левый демон">
+      <button class="pet-target" type="button" aria-label="Погладить левого демона" disabled>to pet</button>
+      <button id="cry-trigger" type="button" aria-label="Уничтожить левого демона" disabled>to destroy</button>
+    </div>
+    <div class="left-demon-actions right-demon-actions" role="group" aria-label="Правый демон">
+      <button id="pet-right" type="button" aria-label="Погладить правого демона" disabled>to pet</button>
+      <button id="destroy-right" type="button" aria-label="Уничтожить правого демона" disabled>to destroy</button>
+    </div>
+  </div>
+  <div class="loading" role="status"><span id="status">Загрузка…</span><button id="retry" type="button" hidden>Попробовать ещё раз</button></div>
+</main>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="destroy-grade" color-interpolation-filters="sRGB">
+    <feComponentTransfer>
+      <feFuncR type="table" tableValues="0 .0625 .125 .1875 .25 .3125 .3632 .415 .477 .543 .613 .667 .73 .798 .869 .952 1"/>
+      <feFuncG type="table" tableValues="0 .0625 .125 .1875 .25 .3125 .3632 .415 .477 .543 .613 .667 .73 .798 .869 .949 1"/>
+      <feFuncB type="table" tableValues="0 .0625 .125 .1875 .25 .3125 .3632 .415 .477 .543 .613 .667 .73 .798 .869 .944 1"/>
+    </feComponentTransfer>
+  </filter>
+  <filter id="right-preview-grade" color-interpolation-filters="sRGB">
+    <feComponentTransfer>
+      <feFuncR type="table" tableValues="0.00000 0.03125 0.06250 0.09375 0.12500 0.15625 0.18750 0.21875 0.25000 0.27841 0.30673 0.33505 0.36337 0.38890 0.41429 0.44295 0.47364 0.50806 0.54115 0.57435 0.60968 0.64500 0.68087 0.71947 0.75809 0.79715 0.83589 0.86128 0.88673 0.91603 0.94531 0.97266 1.00000"/>
+      <feFuncG type="table" tableValues="0.00000 0.03125 0.06250 0.09375 0.12500 0.15625 0.18750 0.21875 0.25000 0.27841 0.30673 0.33505 0.36337 0.38890 0.41429 0.44295 0.47473 0.51164 0.54289 0.57435 0.60968 0.64500 0.68087 0.71947 0.75809 0.79715 0.83589 0.86128 0.88673 0.91603 0.94531 0.97266 1.00000"/>
+      <feFuncB type="table" tableValues="0.00000 0.03125 0.06250 0.09375 0.12500 0.15625 0.18750 0.21875 0.25000 0.27841 0.30673 0.33505 0.36337 0.38890 0.41429 0.44522 0.47865 0.51556 0.54681 0.57827 0.61360 0.64892 0.68479 0.72339 0.76201 0.80107 0.83981 0.86520 0.89056 0.91400 0.93750 0.96875 1.00000"/>
+    </feComponentTransfer>
+  </filter>
+  <filter id="right-pet-grade" color-interpolation-filters="sRGB">
+    <feComponentTransfer>
+      <feFuncR type="table" tableValues="0.00000 0.03125 0.06250 0.09375 0.12500 0.15625 0.18750 0.21875 0.25000 0.27841 0.30673 0.33505 0.36337 0.38890 0.41429 0.44295 0.47364 0.50806 0.54115 0.57435 0.60968 0.64500 0.68087 0.71163 0.74240 0.77362 0.80452 0.82991 0.85928 0.89642 0.93355 0.96874 1.00000"/>
+      <feFuncG type="table" tableValues="0.00000 0.03125 0.06250 0.09375 0.12500 0.15625 0.18750 0.21875 0.25000 0.27841 0.30673 0.33505 0.36337 0.38890 0.41429 0.44295 0.47473 0.51164 0.54289 0.57435 0.60968 0.64500 0.68087 0.71163 0.74240 0.77362 0.80452 0.82991 0.85928 0.89642 0.93355 0.96874 1.00000"/>
+      <feFuncB type="table" tableValues="0.00000 0.03125 0.06250 0.09375 0.12500 0.15625 0.18750 0.21875 0.25000 0.27841 0.30673 0.33505 0.36337 0.38890 0.41429 0.44522 0.47865 0.51556 0.54681 0.57827 0.61360 0.64892 0.68479 0.71555 0.74632 0.77754 0.80844 0.83383 0.86311 0.89439 0.92574 0.96483 1.00000"/>
+    </feComponentTransfer>
+  </filter>
+</svg>
+<script src="app.js?v=pet-contact-and-seam"></script>
+</body>
+</html>

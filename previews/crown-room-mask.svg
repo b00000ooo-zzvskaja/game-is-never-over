@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240">
+<defs>
+<filter id="edge" x="-5%" y="-10%" width="110%" height="120%"><feGaussianBlur stdDeviation="1"/></filter>
+<filter id="protect" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="4"/></filter>
+<mask id="unselected"><rect width="560" height="240" fill="white"/><rect x="365" y="38" width="205" height="220" rx="10" fill="black" filter="url(#protect)"/></mask>
+</defs>
+<path fill="white" mask="url(#unselected)" filter="url(#edge)" d="M 100 18 C 210 3 390 6 472 22 C 515 32 531 60 533 100 L 531 175 Q 530 209 495 214 L 60 214 Q 30 211 28 180 L 28 105 Q 28 39 100 18 Z"/>
+</svg>

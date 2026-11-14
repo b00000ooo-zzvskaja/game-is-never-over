@@ -1,0 +1,230 @@
+:root {
+  color-scheme: light;
+  background: #e0dfe4;
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+main {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.scene {
+  position: relative;
+  width: min(100vw, calc(100svh * 2048 / 1144));
+  aspect-ratio: 2048 / 1144;
+  opacity: 0;
+}
+.scene.ready { opacity: 1; }
+.reaction { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
+.reaction#face {
+  mask-image: radial-gradient(ellipse 9% 7% at 36% 51%, #000 68%, transparent 100%),
+              radial-gradient(ellipse 9% 7% at 63% 51%, #000 68%, transparent 100%);
+}
+.reaction#cry {
+  mask-image: radial-gradient(ellipse 10% 9% at 36% 49%, #000 70%, transparent 100%),
+              radial-gradient(ellipse 10% 9% at 63% 49%, #000 70%, transparent 100%),
+              radial-gradient(ellipse 7% 33% at 66% 79%, #000 72%, transparent 100%);
+}
+main:has(.reaction) {
+  background:
+    linear-gradient(#dddfe4, #e2e4e9, #e3e5e9, #e2e4e9, #e1e3e8) left / 50% 100% no-repeat,
+    linear-gradient(#dde0e5, #e3e5ec, #e3e6ed, #dee4e8, #dde3e9) right / 50% 100% no-repeat;
+}
+.left-demon-actions {
+  position: absolute;
+  left: 34.7%;
+  top: 15%;
+  width: 12%;
+  height: 16%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: clamp(4px, 1.25vw, 16px);
+}
+.left-demon-actions button {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 4px 0;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  opacity: 0;
+  pointer-events: none;
+  font: 500 clamp(7.22px, 1.2635vw, 12.635px)/1 ui-rounded, 'SF Pro Rounded', system-ui, sans-serif;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.left-demon-actions:hover button:not(:disabled),
+.left-demon-actions:focus-within button:not(:disabled) {
+  opacity: .7;
+  pointer-events: auto;
+  animation: action-flicker 2.6s ease-in-out infinite;
+}
+.left-demon-actions button:hover,
+.left-demon-actions button:focus-visible { opacity: 1; }
+.left-demon-actions button:disabled { visibility: hidden; }
+@keyframes action-flicker {
+  0%, 100% { opacity: 1; }
+  35% { opacity: .45; }
+  58% { opacity: .85; }
+  75% { opacity: .55; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .left-demon-actions:hover button:not(:disabled),
+  .left-demon-actions:focus-within button:not(:disabled) { animation: none; }
+}
+.face { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; mask: url('previews/face-mask.svg') 0 0 / 100% 100%; -webkit-mask: url('previews/face-mask.svg') 0 0 / 100% 100%; }
+.room-window, .glass-overlay { position: absolute; left: 29.069767%; top: 5.859375%; width: 40.697674%; height: 31.25%; }
+.room-window { mask: url('previews/crown-room-mask.svg') 0 0 / 100% 100%; -webkit-mask: url('previews/crown-room-mask.svg') 0 0 / 100% 100%; }
+.room { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; transform-origin: 0 0; will-change: transform; }
+.room-motion { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; opacity: 0; transition: opacity .18s ease-in-out; }
+.room-motion.active { opacity: 1; }
+.idle-motion { mask: url('previews/heroine-idle-mask.svg') 0 0 / 100% 100%; }
+.rise-motion { mask: url('previews/left-rise-mask.svg') 0 0 / 100% 100%; }
+video { pointer-events: none; }
+.loading { position: fixed; inset: auto 0 24px; text-align: center; color: #625869; font: 13px system-ui, sans-serif; }
+#retry { margin-left: 12px; border: 1px solid #aaa; padding: 7px 12px; background: #eee; color: inherit; border-radius: 4px; cursor: pointer; }
+[hidden] { display: none !important; }
+.artwork {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  mask-image: linear-gradient(to right, transparent, #000 1.5%, #000 98.5%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 1.5%, #000 98.5%, transparent);
+}
+.scene:has(.reaction) .artwork {
+  --edge-fade: linear-gradient(to right,
+    transparent, #0002 1.5%, #0008 3.5%, #000d 5.5%, #000 7%,
+    #000 93%, #000d 94.5%, #0008 96.5%, #0002 98.5%, transparent);
+  -webkit-mask-image: var(--edge-fade);
+  mask-image: var(--edge-fade);
+}
+.pet-target {
+  position: absolute;
+  left: 34.7%;
+  top: 17.2%;
+  width: 12%;
+  height: 16%;
+  padding: 0;
+  border: 0;
+  border-radius: 40%;
+  background: transparent;
+  cursor: pointer;
+}
+.pet-label {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%);
+  color: #fff;
+  font: 500 13px/1 ui-rounded, 'SF Pro Rounded', system-ui, sans-serif;
+  white-space: nowrap;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: .7;
+}
+.pet-target:hover .pet-label,
+.pet-target:focus-visible .pet-label {
+  visibility: visible;
+  animation: pet-flicker 3.6s ease-in-out infinite;
+}
+.pet-target:disabled { cursor: default; }
+.pet-target:disabled .pet-label { visibility: hidden; animation: none; }
+.pet-target:focus-visible { outline: 1px solid #ffffff80; outline-offset: 3px; }
+@keyframes pet-flicker {
+  0%, 100% { opacity: .7; }
+  40% { opacity: .45; }
+  58% { opacity: .62; }
+  70% { opacity: .52; }
+  85% { opacity: .7; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pet-target .pet-label { animation: none; opacity: .65; }
+}
+
+.room-window-full {
+  mask: url('previews/full-room-mask.svg') 0 0 / 100% 100%;
+  -webkit-mask: url('previews/full-room-mask.svg') 0 0 / 100% 100%;
+}
+.glass-overlay {
+  pointer-events: none;
+}
+#pet-right { left: 57%; }
+#pet-right .pet-label {
+  bottom: 100%;
+  padding: 0 6px 8px;
+}
+#pet-right:not(:disabled):hover .pet-label,
+#pet-right:not(:disabled):focus-visible .pet-label {
+  pointer-events: auto;
+}
+.room-static {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  mask: url('previews/pet-room-static.svg') 0 0 / 100% 100%;
+  -webkit-mask: url('previews/pet-room-static.svg') 0 0 / 100% 100%;
+}
+#room-destroy {
+  object-fit: cover;
+  filter: url(#destroy-grade);
+  transform: translate(.234375%, .2914%) scale(1.014, 1.04);
+  opacity: var(--destroy-opacity, 0);
+}
+.room-window-full:has(#room-destroy:not([hidden]), .right-preview:not([hidden]))::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to right, rgb(0 0 0 / 1%) 7%, transparent 17% 83%, rgb(0 0 0 / 1.6%) 93%);
+}
+.room-window-full:has(#room-destroy:not([hidden]))::after {
+  opacity: var(--destroy-opacity, 0);
+}
+
+.right-preview {
+  object-fit: cover;
+  filter: url(#right-preview-grade);
+  opacity: var(--destroy-opacity, 0);
+  transform: translate(.234375%, .2914%) scale(1.014, 1.04);
+}
+.right-demon-actions { left: 55.5%; }
+.room-window-full:has(.right-preview:not([hidden]))::after {
+  background: linear-gradient(to right, rgb(0 0 0 / .7%) 8%, transparent 22% 83%, rgb(0 0 0 / .7%) 93%);
+  opacity: var(--destroy-opacity, 0);
+}
+
+#room-right.right-preview { filter: url(#right-pet-grade); }
+.right-pet-bottom {
+  display: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  mask-image: linear-gradient(transparent 85%, #000 91%);
+  opacity: var(--destroy-opacity, 0);
+}
+.room-window-full:has(#room-right:not([hidden])) .right-pet-bottom { display: block; }
+.scene[data-state="resetting"] #room-right,
+.scene[data-state="resetting"] .right-pet-bottom,
+.scene[data-state="resetting"] .room-window-full:has(#room-right:not([hidden]))::after {
+  transition: opacity 220ms ease-in-out;
+}
+
+/* Hold the upper right wall and bottom left glass seam during left pet. */
+.scene[data-state="playing"] .room-window-full:not(:has(#room-right:not([hidden]), #room-right-destroy:not([hidden]), #room-destroy:not([hidden]))) .room-static {
+  mask-image: url('previews/pet-room-static.svg'),
+    radial-gradient(ellipse 20% 29% at 82% 23%, #fff 42%, transparent 100%),
+    radial-gradient(ellipse 36% 8% at 17% 94%, #fff 50%, transparent 100%);
+}

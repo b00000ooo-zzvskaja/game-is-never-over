@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1924 1076">
+<defs><filter id="soft" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="9"/></filter></defs>
+<path fill="white" filter="url(#soft)" d="M 550 450 C 730 408 1190 408 1374 450 C 1408 585 1400 750 1330 936 L 1260 1110 L 665 1110 L 590 935 C 520 740 518 575 550 450 Z"/>
+</svg>

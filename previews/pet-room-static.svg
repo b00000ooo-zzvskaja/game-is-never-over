@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 480" preserveAspectRatio="none">
+  <defs>
+    <filter id="seam" x="-5%" y="-5%" width="110%" height="110%">
+      <feGaussianBlur stdDeviation="3"/>
+    </filter>
+  </defs>
+  <path fill="white" fill-rule="evenodd" filter="url(#seam)" d="M-20 -20H1140V500H-20Z M88 213Q88 183 110 174L321 152Q389 144 446 105Q469 83 500 83H716Q753 83 774 111L1000 154Q1052 165 1061 214L1072 402Q1072 437 1040 439H120Q87 439 87 408Z"/>
+</svg>
