@@ -3,11 +3,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Game is never over</title>
-<link rel="stylesheet" href="style.css?v=pet-contact-and-seam">
+<link rel="stylesheet" href="style.css?v=portrait-skin-match">
+<script>
+  if (new URLSearchParams(location.search).has('portrait')) {
+    document.documentElement.classList.add('portrait-preview');
+  }
+</script>
 <body>
 <main>
   <div class="scene" aria-busy="true">
-  <img class="artwork" src="previews/head-seedance-first-frame.png" width="1920" height="1080" alt="Героиня сидит на кровати в комнате за стеклом во лбу. Рядом два чёрных демона." fetchpriority="high" draggable="false">
+    <picture>
+      <source class="portrait-artwork">
+      <img class="artwork" src="previews/head-seedance-first-frame.png" width="1920" height="1080" alt="Героиня сидит на кровати в комнате за стеклом во лбу. Рядом два чёрных демона." fetchpriority="high" draggable="false">
+    </picture>
     <video class="reaction" id="cry" src="previews/head-cry-seedance.mp4" preload="auto" muted playsinline aria-hidden="true" hidden></video>
     <video class="reaction" id="face" src="previews/head-squint-seedance.mp4" preload="auto" muted playsinline aria-hidden="true" hidden></video>
     <div class="room-window room-window-full">
@@ -53,6 +61,6 @@
     </feComponentTransfer>
   </filter>
 </svg>
-<script src="app.js?v=pet-contact-and-seam"></script>
+<script src="app.js?v=portrait-locked-lower-lid"></script>
 </body>
 </html>

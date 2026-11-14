@@ -9,6 +9,89 @@ const scene=document.querySelector('.scene'),windowLayer=document.querySelector(
 const demon=document.querySelector('.pet-target'),loading=document.querySelector('.loading');
 const status=document.querySelector('#status'),retry=document.querySelector('#retry');
 const artwork=document.querySelector('.artwork');
+const portraitPreview=document.documentElement?.classList.contains('portrait-preview');
+let portraitCryLayer;
+let preparePortraitCry;
+if(portraitPreview){
+ document.querySelector('.portrait-artwork').srcset='previews/portrait-game-window-preview.png';
+ cry.src='previews/portrait-cry-neutral-end.mp4';
+ portraitCryLayer=document.createElement('canvas');
+ portraitCryLayer.className='portrait-cry-layer';
+ portraitCryLayer.setAttribute('aria-hidden','true');
+ cry.after(portraitCryLayer);
+
+ // Use the same decoder for the neutral and moving frames, so only motion
+ // transfers to the portrait and the video's color conversion cancels out.
+ const x=100,y=460,width=530,height=389;
+ portraitCryLayer.width=width;
+ portraitCryLayer.height=height;
+ const output=portraitCryLayer.getContext('2d');
+ const sampler=document.createElement('canvas');
+ sampler.width=width;
+ sampler.height=height;
+ const sample=sampler.getContext('2d',{willReadFrequently:true});
+ let neutral, portrait;
+ const result=output.createImageData(width,height);
+ const read=(source,fullWidth)=>{
+  sample.drawImage(source,-x,-y,fullWidth,972);
+  return sample.getImageData(0,0,width,height).data;
+ };
+ let preparing=false;
+ preparePortraitCry=()=>{
+  if(neutral)return true;
+  if(preparing)return false;
+  preparing=true;
+  portrait=read(artwork,729);
+  cry.addEventListener('seeked',()=>{
+   neutral=read(cry,730);
+   cry.addEventListener('seeked',ready,{once:true});
+   cry.currentTime=0;
+  },{once:true});
+  cry.currentTime=cry.duration-0.12;
+  return false;
+ };
+ const drawReaction=(time)=>{
+  if(cry.hidden||cry.seeking||!neutral)return;
+  const remaining=Math.min(cry.duration-time,activeRoom.duration-activeRoom.currentTime);
+  // Show the untouched portrait for the final part of the reaction.
+  if(remaining<=.38){
+   portraitCryLayer.style.opacity=0;
+   output.clearRect(0,0,width,height);
+   return;
+  }
+  const frame=read(cry,730);
+  for(let i=0;i<frame.length;i+=4){
+   const column=x+(i/4)%width;
+   const row=y+Math.floor(i/(4*width));
+   // Keep the left lower lid and lash line on the original portrait.
+   const eyelidRegion=Math.max(0,Math.min(1,
+    (column-132)/9,(304-column)/9,(row-554)/7,(615-row)/12));
+   if(eyelidRegion===1){
+    result.data[i+3]=0;
+    continue;
+   }
+   let changed=false;
+   for(let channel=0;channel<3;channel++){
+    const index=i+channel;
+    const difference=frame[index]-neutral[index];
+    const motion=Math.sign(difference)*Math.max(0,Math.abs(difference)-3);
+    result.data[index]=portrait[index]+motion;
+    changed ||= motion!==0;
+   }
+   result.data[i+3]=changed?255*(1-eyelidRegion):0;
+  }
+  output.putImageData(result,0,0);
+  const opening=Math.max(0,Math.min(1,(time-.18)/.42));
+  portraitCryLayer.style.opacity=Math.min(opening,(remaining-.38)/.45);
+ };
+ if('requestVideoFrameCallback' in cry){
+  const drawFrame=(_,frame)=>{
+   drawReaction(frame.mediaTime);
+   cry.requestVideoFrameCallback(drawFrame);
+  };
+  cry.requestVideoFrameCallback(drawFrame);
+ }else cry.addEventListener('timeupdate',()=>drawReaction(cry.currentTime));
+}
 const roomVideos=[room,rightRoom,destroyRoom,rightDestroyRoom].filter(Boolean);
 const videos=[...roomVideos,face,idle,rise,cry].filter(Boolean);
 const targets=[demon,rightDemon,cryTrigger,rightDestroy].filter(Boolean);
@@ -16,6 +99,7 @@ const enablePet=enabled=>targets.forEach(button=>{button.disabled=!enabled;});
 const prealigned=room.dataset.prealigned==='true';
 const restTime=prealigned?0:.25,reactionStart=prealigned?4:3.9;
 let phase='loading',alignment=null,frameIndex=0,initialSeek=false;
+let portraitCryStarted=false;
 function fail(){
  phase='error';scene.setAttribute('data-state',phase);videos.forEach(v=>v.pause());enablePet(false);
  status.textContent='Не удалось загрузить сцену.';loading.hidden=false;retry.hidden=false;scene.setAttribute('aria-busy','false');
@@ -33,9 +117,11 @@ function align(time){
 }
 function ready(){
  if(phase!=='loading'||(!prealigned&&!alignment)||!artwork.complete||!artwork.naturalWidth||videos.some(v=>v.readyState<3))return;
+ if(portraitPreview&&!artwork.currentSrc.endsWith('/portrait-game-window-preview.png'))return;
  if(!prealigned&&!initialSeek){initialSeek=true;room.currentTime=restTime;return;}
  if(room.seeking||Math.abs(room.currentTime-restTime)>.02)return;
- align(restTime);face.pause();face.currentTime=0;phase='idle';scene.setAttribute('data-state',phase);enablePet(true);
+ if(portraitPreview&&(!preparePortraitCry()||cry.seeking))return;
+ align(restTime);resetFace();phase='idle';scene.setAttribute('data-state',phase);enablePet(true);
  scene.classList.add('ready');scene.setAttribute('aria-busy','false');loading.hidden=true;
  if(idle){idle.classList.add('active');if(!document.hidden)idle.play().catch(fail);}
 }
@@ -74,9 +160,22 @@ function syncFace(){
  if(activeRoom&&(activeRoom===destroyRoom||activeRoom===rightDestroyRoom)){
   const target=activeRoom.currentTime-(activeRoom===destroyRoom?4.5:4);
   if(phase!=='playing'||target<0||target>=cry.duration){
+   portraitCryStarted=false;
    cry.pause();
    cry.hidden=true;
+   if(portraitCryLayer)portraitCryLayer.style.opacity=0;
    if(cry.currentTime!==0)cry.currentTime=0;
+   return;
+  }
+  if(portraitPreview){
+   if(activeRoom.paused){
+    cry.pause();
+   }else if(!portraitCryStarted){
+    portraitCryStarted=true;
+    cry.play().catch(fail);
+   }else if(cry.paused&&!cry.ended){
+    cry.play().catch(fail);
+   }
    return;
   }
   if(Math.abs(cry.currentTime-target)>.15)cry.currentTime=target;
@@ -105,6 +204,7 @@ if(cry){
  });
  cry.addEventListener('ended',()=>{
   cry.hidden=true;
+  if(portraitPreview)return;
   cry.currentTime=0;
  });
  cry.addEventListener('seeked',()=>{

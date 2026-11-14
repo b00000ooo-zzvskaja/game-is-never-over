@@ -228,3 +228,62 @@ video { pointer-events: none; }
     radial-gradient(ellipse 20% 29% at 82% 23%, #fff 42%, transparent 100%),
     radial-gradient(ellipse 36% 8% at 17% 94%, #fff 50%, transparent 100%);
 }
+
+.portrait-preview .scene {
+  width: min(100vw, 75svh);
+  aspect-ratio: 3 / 4;
+  container-type: inline-size;
+}
+.portrait-preview .scene:has(.reaction) .artwork {
+  aspect-ratio: 3 / 4;
+  mask-image: none;
+}
+.portrait-preview .reaction {
+  inset: 24.48% auto auto -25.76%;
+  width: 152.76%;
+  height: 64.44%;
+}
+.portrait-preview .reaction#face {
+  mask-image: radial-gradient(ellipse 7.2% 5.2% at 36% 51%, #000 55%, transparent 100%),
+              radial-gradient(ellipse 7.2% 5.2% at 63% 51%, #000 55%, transparent 100%);
+}
+.portrait-preview .reaction#cry {
+  opacity: 0;
+}
+.portrait-cry-layer {
+  position: absolute;
+  left: 13.7174%;
+  top: 47.3251%;
+  width: 72.7023%;
+  height: 40.0206%;
+  pointer-events: none;
+  opacity: 0;
+}
+#cry[hidden] + .portrait-cry-layer { visibility: hidden; }
+.portrait-preview .room-window,
+.portrait-preview .glass-overlay {
+  left: 19.7%;
+  top: 28.23%;
+  width: 60.03%;
+  height: 19.44%;
+}
+.portrait-preview .left-demon-actions {
+  left: 25%;
+  top: 32%;
+  width: 24%;
+  height: 14%;
+  gap: 0;
+}
+.portrait-preview .right-demon-actions { left: 53%; }
+.portrait-preview .left-demon-actions button {
+  min-height: 32px;
+  padding: 0 3px;
+  font-size: clamp(9px, 2.8cqw, 12.635px);
+}
+@media (hover: none) {
+  .portrait-preview .left-demon-actions button:not(:disabled) {
+    min-height: 44px;
+    opacity: .85;
+    pointer-events: auto;
+  }
+}
