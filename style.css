@@ -229,14 +229,37 @@ video { pointer-events: none; }
     radial-gradient(ellipse 36% 8% at 17% 94%, #fff 50%, transparent 100%);
 }
 
-.portrait-preview .scene {
-  width: min(100vw, 75svh);
+.portrait-preview main {
+  --portrait-width: min(100vw, 75svh);
+}
+.portrait-preview main:has(.scene.ready)::before {
+  content: '';
+  position: absolute;
+  width: var(--portrait-width);
   aspect-ratio: 3 / 4;
+  background: url('previews/portrait-3x4-crop-v4.webp') center / 100% 100%;
+}
+.portrait-preview .scene {
+  width: calc(var(--portrait-width) * .9);
+  aspect-ratio: 3 / 4;
+  transform: translate(-.0686%, -1.85185%);
   container-type: inline-size;
 }
 .portrait-preview .scene:has(.reaction) .artwork {
   aspect-ratio: 3 / 4;
   mask-image: none;
+}
+.portrait-preview .scene::after {
+  content: '';
+  position: absolute;
+  left: 12.4829%;
+  top: 47.2222%;
+  width: 32.6475%;
+  height: 7.8189%;
+  background: url('previews/portrait-brow-scar-v2.png') center / 100% 100%;
+  filter: brightness(calc(1 - .05 * var(--pet-face-opacity, 0)))
+          contrast(calc(1 + .04 * var(--pet-face-opacity, 0)));
+  pointer-events: none;
 }
 .portrait-preview .reaction {
   inset: 24.48% auto auto -25.76%;
@@ -244,8 +267,15 @@ video { pointer-events: none; }
   height: 64.44%;
 }
 .portrait-preview .reaction#face {
-  mask-image: radial-gradient(ellipse 7.2% 5.2% at 36% 51%, #000 55%, transparent 100%),
-              radial-gradient(ellipse 7.2% 5.2% at 63% 51%, #000 55%, transparent 100%);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  filter: brightness(.95) contrast(1.04);
+  /* Let the original still show through beyond the composited face. */
+  mask-image: linear-gradient(transparent 46.8%, #000 51%, #000 80%, transparent 86.4%),
+              linear-gradient(to right, transparent 5%, #000 15%, #000 85%, transparent 95%);
+  mask-composite: intersect;
 }
 .portrait-preview .reaction#cry {
   opacity: 0;

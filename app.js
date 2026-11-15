@@ -15,6 +15,21 @@ let preparePortraitCry;
 if(portraitPreview){
  document.querySelector('.portrait-artwork').srcset='previews/portrait-game-window-preview.png';
  cry.src='previews/portrait-cry-neutral-end.mp4';
+ face.src='previews/portrait-pet-kling4-lightlock.mp4';
+ const fadeFace=time=>{
+  const fadeIn=(time-.08)/.35;
+  const fadeOut=(face.duration-time-.12)/.45;
+  const opacity=Math.max(0,Math.min(1,fadeIn,fadeOut));
+  face.style.opacity=opacity;
+  scene.style.setProperty('--pet-face-opacity',opacity);
+ };
+ if('requestVideoFrameCallback' in face){
+  const frameReady=(_,frame)=>{
+   fadeFace(frame.mediaTime);
+   face.requestVideoFrameCallback(frameReady);
+  };
+  face.requestVideoFrameCallback(frameReady);
+ }else face.addEventListener('timeupdate',()=>fadeFace(face.currentTime));
  portraitCryLayer=document.createElement('canvas');
  portraitCryLayer.className='portrait-cry-layer';
  portraitCryLayer.setAttribute('aria-hidden','true');
@@ -184,12 +199,16 @@ function syncFace(){
  }
  const target=activeRoom.currentTime-(activeRoom===rightRoom?6.5:reactionStart);
  if(phase!=='playing'||target<0||target>=face.duration){resetFace();return;}
- if(Math.abs(face.currentTime-target)>.1)face.currentTime=target;
- if(activeRoom.paused)face.pause();else if(face.paused)face.play().catch(fail);
+ if(!portraitPreview&&Math.abs(face.currentTime-target)>.1)face.currentTime=target;
+ if(activeRoom.paused)face.pause();else if(face.paused&&!face.ended)face.play().catch(fail);
 }
 function resetFace(){
  face.pause();
  if(cry)face.hidden=true;
+ if(portraitPreview){
+  face.style.opacity=0;
+  scene.style.removeProperty('--pet-face-opacity');
+ }
  if(face.currentTime!==0)face.currentTime=0;
 }
 if(cry){
